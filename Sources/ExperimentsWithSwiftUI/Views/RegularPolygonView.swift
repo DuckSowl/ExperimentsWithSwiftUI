@@ -7,18 +7,23 @@
 
 import SwiftUI
 
+/// Regular polygon shape with given number of sides.
 public struct RegularPolygonView: Shape {
     // MARK: - Private properties
     private let sides: Int
     private let contentMode: ContentMode
 
     // MARK: - Initialization
+    /// Creates a regular polygon shape.
+    /// - Parameters:
+    ///   - sides: Number of polygon sides, have to be more than 3.
+    ///   - contentMode: Affects the size and placement of the shape. By default fits given rectangle.
     public init(sides: Int, contentMode: ContentMode = .fit) {
         self.sides = sides
         self.contentMode = contentMode
     }
 
-    // MARK: - Shape
+    // MARK: - Shape conformance
     public func path(in rect: CGRect) -> Path {
         let angle = .pi * 2.0 / Double(sides)
         let size = rect.size
