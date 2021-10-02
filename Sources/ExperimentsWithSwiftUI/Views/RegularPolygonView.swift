@@ -23,15 +23,16 @@ public struct RegularPolygonView: Shape {
         let circumradius = min(size.width, size.height) / 2.0
         let center = CGPoint(x: size.width / 2.0, y: size.height / 2.0)
 
+        let points = (0..<sides)
+            .map { Double($0) * angle - .pi / 2 }
+            .map { angleOfRotation -> CGPoint in
+                CGPoint(
+                    x: center.x + cos(angleOfRotation) * circumradius,
+                    y: center.y + sin(angleOfRotation) * circumradius
+                )
+            }
+
         return Path { path in
-            let points = (0..<sides)
-                .map { Double($0) * angle - .pi / 2 }
-                .map { angleOfRotation -> CGPoint in
-                    CGPoint(
-                        x: center.x + cos(angleOfRotation) * circumradius,
-                        y: center.y + sin(angleOfRotation) * circumradius
-                    )
-                }
             path.addLines(points)
             path.closeSubpath()
         }
