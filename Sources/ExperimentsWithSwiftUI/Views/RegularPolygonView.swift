@@ -31,20 +31,22 @@ public struct RegularPolygonView: Shape {
     // MARK: - Shape conformance
     public func path(in rect: CGRect) -> Path {
         if contentMode == .circle {
-            return circlePath(in: rect)
+            // Take half the square side length, to fit the polygon in the circle
+            let radius = min(rect.width, rect.height) / 2.0
+            let center = CGPoint(x: rect.midX, y: rect.midY)
+            return pathWith(center: center, radius: radius)
         } else {
-            return fitPath(in: rect)
+            let path = pathWith(center: .zero, radius: 1)
+            return path.applying(
+                path.boundingRect.transformToFit(in: rect)
+            )
         }
     }
 
     // MARK: - Private methods
-    /// Path that fits regular polygon in circle inside the given rect.
-    private func circlePath(in rect: CGRect) -> Path {
-        let angle = .pi * 2.0 / Double(sides)
-        // Take half the square side length, to fit the polygon in the circle
-        let radius = min(rect.width, rect.height) / 2.0
-        let center = CGPoint(x: rect.midX, y: rect.midY)
-
+    /// Returns regular polygon path with given parameters.
+    private func pathWith(center: CGPoint, radius: Double) -> Path {
+        let angle = .pi * 2 / Double(sides)
         let points = (0..<sides)
             .map { Double($0) * angle - .pi / 2 }
             .map { angleOfRotation -> CGPoint in
@@ -58,25 +60,6 @@ public struct RegularPolygonView: Shape {
             path.addLines(points)
             path.closeSubpath()
         }
-    }
-
-    /// Path that fits regular polygon in the given rect.
-    private func fitPath(in rect: CGRect) -> Path {
-        let angle = .pi * 2 / Double(sides)
-        let points = (0..<sides)
-            .map { Double($0) * angle - .pi / 2 }
-            .map { angleOfRotation -> CGPoint in
-                CGPoint(x: cos(angleOfRotation), y: sin(angleOfRotation))
-            }
-
-        let path = Path { path in
-            path.addLines(points)
-            path.closeSubpath()
-        }
-
-        return path.applying(
-            path.boundingRect.transformToFit(in: rect)
-        )
     }
 
     // MARK: - Public models
