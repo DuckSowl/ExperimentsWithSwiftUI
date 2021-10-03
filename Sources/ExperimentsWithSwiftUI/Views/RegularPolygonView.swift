@@ -19,6 +19,11 @@ public struct RegularPolygonView: Shape {
     ///   - sides: Number of polygon sides, have to be more than 3.
     ///   - contentMode: Affects the size and placement of the shape. By default fits given rectangle.
     public init(sides: Int, contentMode: ContentMode = .fit) {
+        precondition(
+            sides >= 3,
+            "Can't create a polygon with less than 3 sides"
+        )
+
         self.sides = sides
         self.contentMode = contentMode
     }
