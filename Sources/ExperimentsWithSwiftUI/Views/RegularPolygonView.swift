@@ -101,6 +101,20 @@ public struct RegularPolygonView: Shape {
 
 struct RegularPolygonView_Previews: PreviewProvider {
     static var previews: some View {
-        RegularPolygonView(sides: 3)
+        HStack {
+            VStack {
+                ForEach(3..<8) {
+                    RegularPolygonView(sides: $0)
+                        .stroke(lineWidth: 1)
+                }
+            }
+
+            VStack {
+                ForEach(3..<8) {
+                    RegularPolygonView(sides: $0, contentMode: .circle)
+                        .background(Circle().foregroundColor(.secondary))
+                }
+            }
+        }
     }
 }
