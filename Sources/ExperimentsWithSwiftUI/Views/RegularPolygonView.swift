@@ -12,13 +12,19 @@ public struct RegularPolygonView: Shape {
     // MARK: - Private properties
     private let sides: Int
     private let contentMode: ContentMode
+    private let rotationAngle: Angle
 
     // MARK: - Initialization
     /// Creates a regular polygon shape.
     /// - Parameters:
     ///   - sides: Number of polygon sides, have to be more than 3.
     ///   - contentMode: Affects the size and placement of the shape. By default fits given rectangle.
-    public init(sides: Int, contentMode: ContentMode = .fit) {
+    ///   - rotationAngle: Rotates shape counterclockwise conserving contentMode.
+    public init(
+        sides: Int,
+        contentMode: ContentMode = .fit,
+        rotationAngle: Angle = .zero
+    ) {
         precondition(
             sides >= 3,
             "Can't create a polygon with less than 3 sides"
@@ -26,6 +32,7 @@ public struct RegularPolygonView: Shape {
 
         self.sides = sides
         self.contentMode = contentMode
+        self.rotationAngle = rotationAngle
     }
 
     // MARK: - Shape conformance
@@ -47,8 +54,9 @@ public struct RegularPolygonView: Shape {
     /// Returns regular polygon path with given parameters.
     private func pathWith(center: CGPoint, radius: Double) -> Path {
         let angle = .pi * 2 / Double(sides)
+        let rotation = rotationAngle.radians + .pi / 2.0
         let points = (0..<sides)
-            .map { Double($0) * angle - .pi / 2 }
+            .map { Double($0) * angle - rotation }
             .map { angleOfRotation -> CGPoint in
                 CGPoint(
                     x: center.x + cos(angleOfRotation) * radius,
